@@ -3,7 +3,7 @@ classdef ducky < handle
 
     properties
         Layers
-        LearningRate = 0.1
+        LearningRate
         Weights
     end
 
@@ -13,9 +13,12 @@ classdef ducky < handle
         % constructor %
         %%%%%%%%%%%%%%%
 
-        function obj = ducky(layers)
+        function obj = ducky(layers, learningRate)
             % initialise layers
             obj.Layers = layers;
+
+            % initialise learning rate
+            obj.LearningRate = learningRate;
 
             % initialise weights
             weights = cell(1, length(layers) - 1);
