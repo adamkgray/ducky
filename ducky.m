@@ -31,10 +31,22 @@ classdef ducky < handle
 
             for i = 1:(length(layers) - 1)
 
+                % NOTES:
+
+                % the computation of the weighted sums from one
+                % layer to the next is just matrix multiplication
+
                 % the weights connecting two layers are stored
                 % as an NxM matrix where 'N' is the number of nodes
                 % in the parent layer and 'M' is the number of nodes
                 % in the child layer
+
+                % each column in a weight matrix represents
+                % the weights from the parent layer to a single node
+
+                % the result of the matrix multiplication will
+                % always be a 1xM matrix - the weighted sums of the
+                % parent layer
 
                 % add one node to each weight matrix
                 % as a bias node
