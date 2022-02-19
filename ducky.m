@@ -5,6 +5,7 @@ classdef ducky < handle
         Layers
         LearningRate
         Weights
+        Activation
     end
 
     methods
@@ -13,12 +14,15 @@ classdef ducky < handle
         % constructor %
         %%%%%%%%%%%%%%%
 
-        function obj = ducky(layers, learningRate)
+        function obj = ducky(layers, learningRate, activation)
             % initialise layers
             obj.Layers = layers;
 
             % initialise learning rate
             obj.LearningRate = learningRate;
+
+            % initialise activation function
+            obj.Activation = activation;
 
             % initialise weights
             weights = cell(1, length(layers) - 1);
@@ -42,16 +46,36 @@ classdef ducky < handle
         %%%%%%%%%%%%%%%%%%%%%%%
         % activation function %
         %%%%%%%%%%%%%%%%%%%%%%%
-        function y = activation(~, x)
-            y = 1 ./ (1 + exp(-x));
+        function y = activation(obj, x)
+
+            switch obj.Activation
+                case 'sig' % sigmoid
+                    y = 1 ./ (1 + exp(-x));
+                case 'tanh' % hyperbolic tangent
+                    y = tanh(x);
+                otherwise % default is sigmoid
+                    y = 1 ./ (1 + exp(-x));
+            end
+
         end
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % derivative of the activation function %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function y = activationDerivative(~, x)
-            f = 1 ./ (1 + exp(-x));
-            y = f .* (1 - f);
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function y = activationDerivative(obj, x)
+
+            switch obj.Activation
+                case 'sig' % sigmoid
+                    f = 1 ./ (1 + exp(-x));
+                    y = f .* (1 - f);
+                case 'tanh' % hyberbolic tangent
+                    y = 1 - (tanh(x).^2);
+                otherwise % default is sigmoid
+                    f = 1 ./ (1 + exp(-x));
+                    y = f .* (1 - f);
+
+            end
+
         end
 
         %%%%%%%%%%%%%%%%%%%%%
