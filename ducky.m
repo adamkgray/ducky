@@ -73,6 +73,27 @@ classdef ducky < handle
             obj.Weights = weights;
         end
 
+        %%%%%%%
+        % SSE %
+        %%%%%%%
+        function error = sse(~, x, t)
+            error = sum((t - x).^2);
+        end
+
+        %%%%%%%
+        % MSE %
+        %%%%%%%
+        function error = mse(~, x, t)
+            error = sum((t - x).^2) / length(x);
+        end
+
+        %%%%%%%%%%%%
+        % accuracy %
+        %%%%%%%%%%%%
+        function acc = accuracy(~, x, t)
+            acc = sum(round(x) == t) / length(x);
+        end
+
         %%%%%%%%%%%%%%%%%%%%%%%
         % activation function %
         %%%%%%%%%%%%%%%%%%%%%%%
@@ -108,18 +129,14 @@ classdef ducky < handle
 
         end
 
-        %%%%%%%%%%%%%%%%%%%%%
-        % sum squared error %
-        %%%%%%%%%%%%%%%%%%%%%
-        function error = sse(obj, x, t)
-            p = predict(obj, x);
-            error = sum((t - p).^2) / 2;
-        end
-
         %%%%%%%%%%%%%%%%%
         % train network %
         %%%%%%%%%%%%%%%%%
-        function errors = train(obj, x, t, epochs)
+        function [net, errors] = train(obj, x, t, epochs)
+
+            % we return the net itself
+            net = obj;
+
             % since our weights include an extra node
             % for the bias, we need to add an extra
             % feature to our data
@@ -130,6 +147,9 @@ classdef ducky < handle
             % store the error rate for each epoch
             % in a vector
             errors = zeros(1, epochs);
+
+            % display waitbar
+            f = waitbar(0, "");
 
             % iterate over epochs
             for e = 1:epochs
@@ -142,9 +162,15 @@ classdef ducky < handle
                     fit(obj, xWithBias(i, :), t(i, :))
                 end
 
-                % remember SSE for this epoch
-                errors(e) = sse(obj, x, t);
+                % remember error rate for this epoch
+                acc = accuracy(obj, predict(obj, x), t);
+                errors(e) = 1 - acc;
+
+                waitbar(e / epochs, f, sprintf('training %d/%d, error rate %f', e, epochs, 1 - acc));
+
             end
+
+            close(f)
 
         end
 
