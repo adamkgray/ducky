@@ -1,3 +1,7 @@
+% based on this article
+% https://pyimagesearch.com/2021/05/06/backpropagation-from-scratch-with-python/
+% accessed February 18th, 2022
+
 classdef ducky < handle
     % custom feedforward neural net
 
@@ -159,7 +163,8 @@ classdef ducky < handle
                 % conduct a forward pass and
                 % then do backpropagation
                 for i = 1:size(xWithBias, 1)
-                    fit(obj, xWithBias(i, :), t(i, :))
+                    [weightedSums, activations] = forwardPass(obj, xWithBias(i, :));
+                    backpropagation(obj, t(i, :), weightedSums, activations);
                 end
 
                 % remember error rate for this epoch
@@ -174,15 +179,10 @@ classdef ducky < handle
 
         end
 
-        %%%%%%%
-        % fit %
-        %%%%%%%
-        function fit(obj, x, t)
-
-            %%%%%%%%%%%%%%%%
-            % forward pass %
-            %%%%%%%%%%%%%%%%
-
+        %%%%%%%%%%%%%%%%
+        % forward pass %
+        %%%%%%%%%%%%%%%%
+        function [weightedSums, activations] = forwardPass(obj, x)
             % keep track of the final activations for each layer
             weightedSums = cell(1, length(obj.Weights));
             activations = cell(1, length(obj.Weights));
@@ -205,10 +205,12 @@ classdef ducky < handle
                 activations{i + 1} = net;
             end
 
-            %%%%%%%%%%%%%%%%%%%
-            % backpropagation %
-            %%%%%%%%%%%%%%%%%%%
+        end
 
+        %%%%%%%%%%%%%%%%%%%
+        % backpropagation %
+        %%%%%%%%%%%%%%%%%%%
+        function backpropagation(obj, t, weightedSums, activations)
             % compute the cost
             cost = activations{end} - t;
 
