@@ -77,25 +77,26 @@ classdef ducky < handle
             obj.Weights = weights;
         end
 
-        %%%%%%%
-        % SSE %
-        %%%%%%%
-        function error = sse(~, x, t)
-            error = sum((t - x).^2);
-        end
-
-        %%%%%%%
-        % MSE %
-        %%%%%%%
-        function error = mse(~, x, t)
-            error = sum((t - x).^2) / length(x);
-        end
-
         %%%%%%%%%%%%
         % accuracy %
         %%%%%%%%%%%%
         function acc = accuracy(~, x, t)
             acc = sum(round(x) == t) / length(x);
+        end
+
+        %%%%%%%%%%%%%%%%%%%
+        % weights heatmap %
+        %%%%%%%%%%%%%%%%%%%
+        function weightsHeatMap(obj)
+
+            for i = 1:length(obj.Weights)
+                subplot(1, length(obj.Weights), i)
+                heatmap(obj.Weights{i})
+                title(sprintf("%i -> %i", i - 1, i))
+            end
+
+            sgtitle("Weight Heat Maps")
+
         end
 
         %%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +153,6 @@ classdef ducky < handle
             % in a vector
             errors = zeros(1, epochs);
 
-            % display waitbar
             f = waitbar(0, "");
 
             % iterate over epochs
@@ -266,6 +266,20 @@ classdef ducky < handle
 
             for i = 1:length(obj.Weights)
                 p = activation(obj, (p * obj.Weights{i}));
+            end
+
+        end
+
+        %%%%%%%%%%%%%%%
+        % activations %
+        %%%%%%%%%%%%%%%
+        function a = activations(obj, x)
+            a = cell(1, length(obj.Weights));
+            p = [x ones(size(x, 1), 1)];
+
+            for i = 1:length(obj.Weights)
+                p = activation(obj, (p * obj.Weights{i}));
+                a{i} = p;
             end
 
         end
