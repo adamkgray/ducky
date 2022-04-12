@@ -107,6 +107,8 @@ classdef ducky < handle
             switch obj.Activation
                 case 'sig' % sigmoid
                     y = 1 ./ (1 + exp(-x));
+                case 'sin' % sine
+                    y = sin(x);
                 case 'tanh' % hyperbolic tangent
                     y = tanh(x);
                 otherwise % default is sigmoid
@@ -124,6 +126,8 @@ classdef ducky < handle
                 case 'sig' % sigmoid
                     f = 1 ./ (1 + exp(-x));
                     y = f .* (1 - f);
+                case 'sin' % sine
+                    y = cos(x);
                 case 'tanh' % hyberbolic tangent
                     y = 1 - (tanh(x).^2);
                 otherwise % default is sigmoid
